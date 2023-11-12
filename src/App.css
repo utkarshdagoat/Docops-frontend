@@ -1,0 +1,17 @@
+.ProseMirror:focus-visible{
+    outline: none;
+}
+
+.tiptap:focus-visible {
+    outline: none;
+}
+
+#modal {
+    top: 50%;
+    right: 50%;
+    margin: -230px -175px 0px 0px ;
+}
+
+.collaboration-cursor__label{
+    width: max-content;
+}
