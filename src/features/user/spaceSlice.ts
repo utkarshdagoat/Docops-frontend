@@ -1,22 +1,21 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { spaceApi } from "../../services/space";
+import { SpaceResponse } from "../../services/space";
 
-interface spaceName {
-  name: string;
-}
-
-const initialState: spaceName = {
-  name: '',
-};
+const initialState: SpaceResponse[] = []
 
 const spaceNameSlice = createSlice({
-  name: 'user',
+  name: 'space',
   initialState: initialState,
   reducers: {
-    updateName: (state, action: PayloadAction<string>) => {
-      state.name = action.payload;
-    },
-  },
-});
 
-export const { updateName } = spaceNameSlice.actions;
+  },
+  extraReducers(builder) {
+    builder.addMatcher(spaceApi.endpoints.getFilesForSpaces.matchFulfilled, (state, { payload }) => {
+      state = payload
+
+    })
+
+  }
+});
 export default spaceNameSlice.reducer;

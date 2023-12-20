@@ -2392,6 +2392,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.10.0.tgz#e2170dc2049b06e65bbe883adad0e8ddf8291278"
   integrity sha512-Lm+fYpMfZoEucJ7cMxgt4dYt8jLfbpwRCzAjm9UgSLOkmlqo9gupxt6YX3DY0Fk155NT9l17d/ydi+964uS9Lw==
 
+"@sereneinserenade/tiptap-comment-extension@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@sereneinserenade/tiptap-comment-extension/-/tiptap-comment-extension-0.0.6.tgz#272bb110947238810ea3096ef3ecbb8605289b60"
+  integrity sha512-ZfKfMYcvf1bfwX5AcXLyESvOq4B7OOKtKdIb29+rbalXCtVOqVNpTtVQ8Xzo4bKVS0/ZFXLoes5wAxV/iQPEYQ==
+
 "@swc/core-darwin-arm64@1.3.93":
   version "1.3.93"
   resolved "https://registry.yarnpkg.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.3.93.tgz#aefd94625451988286bebccb1c072bae0a36bcdb"

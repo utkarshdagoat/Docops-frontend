@@ -17,6 +17,7 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^1.9.7",
+    "@sereneinserenade/tiptap-comment-extension": "^0.0.6",
     "@tabler/icons-react": "^2.39.0",
     "@tiptap/extension-collaboration": "^2.1.12",
     "@tiptap/extension-collaboration-cursor": "^2.1.12",

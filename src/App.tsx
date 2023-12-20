@@ -1,6 +1,5 @@
 import { useGetUserDataQuery, userApi } from "./services/user"
 import { Route, Routes } from "react-router-dom"
-import Home from "./pages/home"
 import Login from "./pages/Login"
 import Navbar from "./components/Navbar"
 import './App.css'
@@ -10,9 +9,10 @@ import Space from "./pages/spaces"
 import DocumentDetail from "./pages/document-detail"
 import { useState } from "react"
 import useWebSocket, { ReadyState } from "react-use-websocket"
-import NotificationToast , {notificationData} from "./components/notificationToast"
-import { ToastContainer, toast } from 'react-toastify';
+import { notificationData } from "./components/notificationToast"
+import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SideBar from "./components/sidebar"
 
 function App() {
 
@@ -20,7 +20,7 @@ function App() {
   const user = useAppSelector((state) => state.user)
   const [trigger, { data, error, isLoading }] = userApi.endpoints.getUserData.useLazyQuery()
 
-  const [newNotificaiton , setNewNotification] = useState<boolean>(false)
+  const [newNotificaiton, setNewNotification] = useState<boolean>(false)
 
   useEffect(() => {
     if (!user.LoggedIn) {
@@ -29,8 +29,8 @@ function App() {
   }, [])
 
   //notification
-  const [showNotification , setShowNotification] = useState<boolean>(false)
-  const [notification , setNotification] = useState<notificationData | null>(null)
+  const [showNotification, setShowNotification] = useState<boolean>(false)
+  const [notification, setNotification] = useState<notificationData | null>(null)
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     'ws://localhost:8000/notifs/',
     {
@@ -49,15 +49,15 @@ function App() {
       })
     }
   }, [readyState])
-  
+
   useEffect(() => {
     setShowNotification(true)
-    setTimeout(()=>{
+    setTimeout(() => {
       setShowNotification(false)
-    } , 10000)
+    }, 10000)
     const notificationFromjsonMessage = JSON.parse(String(lastJsonMessage)) as notificationData
     setNotification(notificationFromjsonMessage)
-    if(notificationFromjsonMessage) setNewNotification(true)
+    if (notificationFromjsonMessage) setNewNotification(true)
     console.log(notificationFromjsonMessage)
   }, [lastJsonMessage])
 
@@ -71,15 +71,16 @@ function App() {
       ) : data?.LoggedIn ? (
         <>
           <ToastContainer />
-          <Navbar newNotificaiton={newNotificaiton}/>
-          { showNotification && notification &&
-            <NotificationToast setVisibilty={setShowNotification} notification={notification}/>
-          }
-          <Routes>
-            <Route path="/" index element={<Home />} />
-            <Route path="space/:name/document/:id/:isNew?" element={<DocumentDetail />} />
-            <Route path="spaces" element={<Space />} />
-          </Routes>
+          <div className="flex" >
+            <SideBar />
+            {showNotification && notification &&
+              <NotificationToast setVisibilty={setShowNotification} notification={notification} />
+            }
+            <Routes>
+              <Route path="space/:name/document/:id/:isNew?" element={<DocumentDetail />} />
+              <Route path="/" element={<Space />} />
+            </Routes>
+          </div>
         </>
       ) : <Login />}
     </div>

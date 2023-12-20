@@ -1,84 +1,98 @@
-import { useState } from "react";
-import { useGetFilesForSpacesQuery } from "../services/space";
+import { useAppSelector } from "../hooks/redux";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { SpaceResponse, useGetFilesForSpacesQuery } from "../services/space";
 import { Spinner } from "@nextui-org/react";
-import { ChevronDown, ChevronRight, Cross, Menu, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import Search from "./searchBar";
+import { useGetNotificationsDataQuery } from "../services/user";
+import { Notification } from "../services/user";
 
+const SideBar = () => {
+  const Notifications = useGetNotificationsDataQuery()
+  const { data, error, isLoading } = useGetFilesForSpacesQuery();
+  const user = useAppSelector((state) => state.user.user)
+  const spaces = useAppSelector((state) => state.space)
+  console.log(spaces)
+  const colors = [
 
-interface SideBarProps {
-    docId: string;
-    sideBarOpen: boolean;
-    setSideBarOpen: (val: boolean) => void;
+    'yellow',
+    'green',
+    'blue',
+    'indigo',
+    'purple',
+    'pink'
+  ]
+
+  const [notifications, setNotifications] = useState<Notification[]>([])
+
+  useEffect(() => {
+    if (Notifications.data) setNotifications(Notifications.data.slice(0, 5))
+  }, [Notifications.data])
+
+  const buttonColor = () => {
+    return colors[Math.floor(Math.random() * (colors.length - 1))];
+  }
+  return (
+    <>
+
+      <aside className="flex flex-col  min-w-[300px] max-w-[400px] h-screen px-5 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+        <div className="flex flex-col  flex-1 mt-6">
+          <div className="text-base w-full"><p className="font-bold">{user?.username}'s </p>Documents</div>
+          <div className="mt-6">
+            <Search />
+
+            <nav className="mt-4 -mx-3 space-y-3 ">
+              {Notifications.error ? (
+                <>Some Error Occured</>
+              ) : Notifications.isLoading ? (
+                <Spinner />
+              ) : Notifications.data ? (
+
+                notifications.map((notif) => (
+                  <button className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+                    <div className="flex items-center gap-x-2 ">
+                      <span className={"w-2 h-2 bg-" + buttonColor() + "-500 rounded-full"}></span>
+                      <span>{notif.message}</span>
+                    </div>
+                  </button>
+                ))
+              ) : null}
+            </nav>
+
+            <div className="flex items-center justify-between mt-6">
+              <h2 className="text-base font-semibold text-gray-800 dark:text-white"><Link to='/'>Spaces</Link></h2>
+              <button className="p-0.5 hover:bg-gray-100 duration-200 transition-colors text-gray-500 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 border rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className="mt-4 -mx-3 space-y-3 ">
+              {error ? (
+                <>Some Error Occured</>
+              ) : isLoading ? (
+                <Spinner />
+              ) : data ? (
+
+                data.map((space: SpaceResponse) => (
+                  <button className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+                    <div className="flex items-center gap-x-2 ">
+                      <span className={"w-2 h-2 bg-" + buttonColor() + "-500 rounded-full"}></span>
+                      <span>{space.name}</span>
+                    </div>
+                  </button>
+                ))
+              ) : null}
+            </nav>
+          </div>
+        </div>
+      </aside >
+
+    </>
+  )
+
 }
 
-const SideBar = ({ docId, sideBarOpen, setSideBarOpen }: SideBarProps) => {
-    const navigate = useNavigate();
-    const { data, isLoading, error } = useGetFilesForSpacesQuery();
-    const [open, setOpen] = useState<boolean>(false);
-
-    return (
-        <div className="flex flex-col w-full h-full">
-            {error ? (
-                <>some Error occurred</>
-            ) : isLoading ? (
-                <Spinner />
-            ) : sideBarOpen ? (
-
-                <div className="w-full h-full py-3 px-2 overflow-y-auto rounded transition-transform bg-gray-50 dark:bg-gray-800">
-                    <div className="w-full flex justify-end">
-                        <X
-                            className="hover:bg-gray-300 p-0.5 rounded-lg transition-all"
-                            onClick={() => setSideBarOpen(false)}
-                            size={24}
-                        />
-                    </div>
-                    <div className="font-bold text-lg">Public</div>
-                    {data?.map((space) => (
-                        <div key={space.invite_code}>
-                            <ul>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
-                                        onClick={(e) => setOpen(!open)}
-                                    >
-                                        <div className="transition-all">
-                                            {open ? (
-                                                <ChevronDown className="hover:bg-gray-300 rounded-lg transition-all" />
-                                            ) : (
-                                                <ChevronRight className="hover:bg-gray-300 rounded-lg transition-all" />
-                                            )}
-                                        </div>
-                                        <span className="ml-2">{space.name}</span>
-                                    </a>
-                                    {open &&
-                                        space.files?.map((file) => (
-                                            <div
-                                                key={file.docId}
-                                                className="flex items-center px-3 py-1 font-light text-gray-900 rounded-lg group hover:bg-gray-100 transition-all dark:text-white dark:hover:bg-gray-700 ml-11 mr-3 text-sm hover:cursor-pointer"
-                                                onClick={(e) =>
-                                                    navigate(`/space/${space.name}/document/${file.docId}`)
-                                                }
-                                            >
-                                                <div className={docId === file.docId ? "font-bold" : "font-light"}>
-                                                    {file.heading}
-                                                </div>
-                                            </div>
-                                        ))}
-                                </li>
-                            </ul>
-                        </div>
-                    ))}
-                </div>
-            ) : (<div className="mt-3 ml-3">
-                <Menu
-                    className="hover:bg-gray-300 p-0.5 rounded-lg transition-all"
-                    onClick={() => setSideBarOpen(true)}
-                />
-            </div>
-            )}
-        </div>
-    );
-};
 
 export default SideBar;
